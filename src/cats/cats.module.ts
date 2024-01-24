@@ -1,18 +1,18 @@
-import { Module } from '@nestjs/common';
+import { Module, Scope } from '@nestjs/common';
 import { CatsController } from './cats.controller';
 import { CatsService } from './cats.service';
 import { CatStore } from './ports/catStore';
-import { InMemoryCatStore } from './adapters/cat-store/in-memory-cat-store.service';
+import { AdaptersModule } from './adapters/adapters.module';
 
 @Module({
-  imports: [],
+  imports: [AdaptersModule],
   controllers: [CatsController],
   providers: [
-    InMemoryCatStore,
     {
       provide: CatsService,
-      useFactory: (store: CatStore) => new CatsService(store),
-      inject: [InMemoryCatStore],
+      useFactory: async (store: CatStore) => new CatsService(store),
+      inject: [CatStore],
+      scope: Scope.REQUEST,
     },
   ],
 })

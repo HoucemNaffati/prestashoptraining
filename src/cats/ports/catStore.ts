@@ -1,9 +1,9 @@
 import { Cat } from '../model/cat';
 
-export interface CatStore {
-  byId(id: string): Promise<Cat>;
+export abstract class CatStore {
+  abstract byId(id: string): Promise<Cat>;
 
-  all(): Promise<Cat[]>;
+  abstract all(): Promise<Cat[]>;
 
-  save(cat: Cat): Promise<void>;
+  abstract save(cat: Cat): Promise<void>;
 }
