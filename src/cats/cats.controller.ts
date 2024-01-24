@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Req,
+  UseFilters,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { Request } from 'express';
@@ -16,25 +17,48 @@ import {
   PatchCatsRequestParamDto,
 } from './CatsRequestParam.dto';
 import { GetHeaders } from '../decorators';
-
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ExceptionsFilter } from './exceptions-filter';
 
 @Controller('cats')
+@UseFilters(ExceptionsFilter)
+@ApiTags('CATS')
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
+  @ApiOperation({
+    summary: "fetch one cat by it's id",
+    description: 'find one',
+  })
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.catsService.getOne(id);
   }
 
+  @ApiOperation({
+    summary: 'fetch all cats',
+    description: 'find all',
+  })
   @Get()
   @GetHeaders(HttpStatus.OK)
   async findAll() {
     return await this.catsService.getAll();
   }
 
+  @ApiOperation({
+    summary: 'create a cat',
+    description: 'create',
+  })
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({
+    status: 201,
+    description: 'the cat was successfully created. Check location header.',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'the cat already exists.',
+  })
   async createCat(@Body() body: CatsRequestParamDto, @Req() request: Request) {
     await this.catsService.create({
       id: body.id,
@@ -45,6 +69,10 @@ export class CatsController {
     request.res.setHeader('Location', location);
   }
 
+  @ApiOperation({
+    summary: 'change a cat characteristics',
+    description: 'patch',
+  })
   @Patch(':id')
   @HttpCode(HttpStatus.CREATED)
   async patchCat(

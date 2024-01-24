@@ -1,32 +1,6 @@
 import { Injectable } from '@nestjs/common';
-
-export interface Cat {
-  id: string;
-  name: string;
-  age: number;
-}
-export interface CatStore {
-  byId(id: string): Promise<Cat>;
-  all(): Promise<Cat[]>;
-  save(cat: Cat): Promise<void>;
-}
-
-@Injectable()
-export class InMemoryCatStore implements CatStore {
-  readonly store = new Map<string, Cat>();
-  async byId(id: string): Promise<Cat> {
-    return this.store.get(id);
-  }
-  async all(): Promise<Cat[]> {
-    return [...this.store.values()];
-  }
-  async save(cat: Cat): Promise<void> {
-    this.store.set(cat.id, cat);
-  }
-  clear(){
-    this.store.clear();
-  }
-}
+import { Cat } from './model/cat';
+import { CatStore } from './ports/catStore';
 
 @Injectable()
 export class CatsService {
