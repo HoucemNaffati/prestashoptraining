@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CatStore } from '../../ports/catStore';
 import { Cat } from '../../model/cat';
-import { Exceptions } from '../../model/exceptions';
+import { CatAlreadyExistException } from '../../model/exceptions';
 
 @Injectable()
 export class InMemoryCatStore implements CatStore {
@@ -16,7 +16,7 @@ export class InMemoryCatStore implements CatStore {
   }
 
   async save(cat: Cat): Promise<void> {
-    if (this.store.has(cat.id)) Exceptions.throw(cat.id);
+    if (this.store.has(cat.id)) CatAlreadyExistException.throw(cat.id);
     this.store.set(cat.id, cat);
   }
 

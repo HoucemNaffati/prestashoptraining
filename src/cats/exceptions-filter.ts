@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { Exceptions } from './model/exceptions';
+import { CatAlreadyExistException } from './model/exceptions';
 @Catch(Error)
 export class ExceptionsFilter<T extends Error | HttpException>
   implements ExceptionFilter
@@ -40,7 +40,7 @@ export class ExceptionsFilter<T extends Error | HttpException>
       );
     else {
       switch (exception.constructor) {
-        case Exceptions:
+        case CatAlreadyExistException:
           return ExceptionsFilter.formatHttpException(
             new ConflictException(),
             exception.message,
