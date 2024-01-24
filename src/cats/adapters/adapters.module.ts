@@ -1,19 +1,19 @@
-import { Module, Scope } from '@nestjs/common';
-import { CatStore } from '../ports/catStore';
-import { InMemoryCatStore } from './cat-store/in-memory-cat-store.service';
+import { Module, Scope, Logger as NestJSLogger } from '@nestjs/common';
+import { CatStore } from '../core/ports/catStore';
+import { InMemoryCatStore } from './cat-store/in-memory-cat-store';
+import { Logger } from '../core/ports/logger';
 
 @Module({
   imports: [],
   providers: [
-    ...[
-      { provide: 'MY_PARAM', useValue: 111 },
-      {
-        provide: CatStore,
-        useClass: InMemoryCatStore,
-        scope: Scope.DEFAULT,
-      },
-    ],
+    { provide: Logger, useClass: NestJSLogger },
+    { provide: 'MY_PARAM', useValue: 111 },
+    {
+      provide: CatStore,
+      useClass: InMemoryCatStore,
+      scope: Scope.DEFAULT,
+    },
   ],
-  exports: [CatStore],
+  exports: [CatStore, Logger],
 })
 export class AdaptersModule {}

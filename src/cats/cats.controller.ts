@@ -10,19 +10,27 @@ import {
   Req,
   UseFilters,
 } from '@nestjs/common';
-import { CatsService } from './cats.service';
+import { CatsService } from './core/cats.service';
 import { Request } from 'express';
 import {
   CatsRequestParamDto,
   PatchCatsRequestParamDto,
 } from './CatsRequestParam.dto';
 import { GetHeaders } from '../decorators';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBasicAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ExceptionsFilter } from './exceptions-filter';
+import { AuthGuard } from '@nestjs/passport';
+import { Public } from './auth/basic-auth.guard';
 
 @Controller('cats')
 @UseFilters(ExceptionsFilter)
 @ApiTags('CATS')
+@ApiBasicAuth()
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
@@ -41,7 +49,8 @@ export class CatsController {
   })
   @Get()
   @GetHeaders(HttpStatus.OK)
-  async findAll() {
+  @Public()
+  async xxx() {
     return await this.catsService.getAll();
   }
 

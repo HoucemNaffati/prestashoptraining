@@ -12,6 +12,6 @@
 10. exception filters: transform domain errors to http errors
 11. logging: using the nestjs logger, log all requests tip
 12. configuration: example with JOI
-13. testing
+13. testing: e2e, ispec, spec
 14. authentication module with passport
     -------------------^Questions^-------------------

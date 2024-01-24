@@ -5,10 +5,15 @@ import {
   ExceptionFilter,
   HttpException,
   InternalServerErrorException,
+  Logger,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { CatAlreadyExistException } from './model/exceptions';
+import {
+  CatAlreadyExistException,
+  MaxFetchReachedException,
+} from './core/model/exceptions';
 @Catch(Error)
 export class ExceptionsFilter<T extends Error | HttpException>
   implements ExceptionFilter
@@ -40,12 +45,20 @@ export class ExceptionsFilter<T extends Error | HttpException>
       );
     else {
       switch (exception.constructor) {
+        case MaxFetchReachedException:
+          Logger.warn(`caught http exception ${exception.message}`);
+          return ExceptionsFilter.formatHttpException(
+            new UnprocessableEntityException(),
+            exception.message,
+          );
         case CatAlreadyExistException:
+          Logger.log(`caught http exception ${exception.message}`);
           return ExceptionsFilter.formatHttpException(
             new ConflictException(),
             exception.message,
           );
         default:
+          Logger.error(`caught unhandled exception ${exception.message}`);
           return ExceptionsFilter.formatHttpException(
             new InternalServerErrorException(),
             exception.message,
